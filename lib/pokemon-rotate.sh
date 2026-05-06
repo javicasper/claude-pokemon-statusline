@@ -4,7 +4,7 @@
 # Usage: pokemon-rotate.sh [width] [fixed_id]
 set -euo pipefail
 
-WIDTH="${1:-22}"
+WIDTH="${1:-30}"
 FIXED_ID="${2:-}"
 TOTAL=649  # PokeAPI BW animated covers Gen 1-5 (IDs 1..649)
 SPRITES_DIR="$HOME/.claude/sprites-pokemon"
