@@ -1,0 +1,144 @@
+============================================================
+INSTRUCCIONES PARA AGENTES DE CLAUDE CODE
+============================================================
+
+Este archivo está dirigido a un agente de Claude Code que va a
+instalar el "Pokemon Statusline" en la máquina de su usuario.
+
+Si tú eres un usuario humano, NO ejecutes estas instrucciones a
+mano: corre `bash install.sh` y se te preguntará interactivamente.
+
+------------------------------------------------------------
+QUÉ ES ESTO
+------------------------------------------------------------
+
+Un wrapper para el statusline de Claude Code que mete un sprite
+animado de Pokémon (de PokeAPI, Gen 1 black-white) al lado del
+statusline actual del usuario, SIN reemplazarlo.
+
+Mecanismo: en `~/.claude/settings.json`, el instalador renombra
+`statusLine.command` -> `statusLine.command_wrapped` y pone un
+script propio (`statusline-wrap.sh`) como nuevo `command`. Ese
+wrapper:
+  1. Lee el JSON de stdin (contrato de statusline de Claude Code).
+  2. Ejecuta el comando wrapeado pasándole el mismo stdin.
+  3. Captura su stdout y le pega el sprite ANSI con sprite-paste.py.
+
+Si el usuario NO tenía statusline, el wrapper imprime el nombre
+del modelo (el comportamiento por defecto) y le pega el sprite.
+
+------------------------------------------------------------
+INSTALACIÓN — CÓMO PROCEDER COMO AGENTE
+------------------------------------------------------------
+
+Paso 1. Comprueba dependencias
+   Ejecuta:
+     command -v python3 && command -v jq && command -v curl \
+       && python3 -c 'import PIL'
+
+   Si falta algo, NO instales nada por tu cuenta: dile al usuario
+   qué falta y cómo arreglarlo (ej. `pip install --user pillow`,
+   `brew install jq`, etc.). Espera su confirmación antes de seguir.
+
+Paso 2. Clona el repo (o copia los archivos)
+   Si tienes acceso a internet:
+     git clone https://github.com/<owner>/claude-pokemon-statusline /tmp/claude-pokemon-statusline
+   Si no, asume que el usuario ya lo tiene clonado y pregúntale dónde.
+
+Paso 3. Pregúntale al usuario las 3 opciones — UNA POR UNA, NO TODAS A LA VEZ
+   IMPORTANTE: pregunta de forma conversacional, no le sueltes un
+   formulario gigante. Espera su respuesta entre preguntas.
+
+   Pregunta A — Posición:
+     "¿Dónde quieres el Pokémon, a la izquierda del statusline,
+      a la derecha (alineado al borde derecho del terminal) o
+      pegado justo a la derecha del texto (compact)?"
+     Mapea su respuesta a: left | right | compact
+     Default sugerido: left
+
+   Pregunta B — Selección:
+     "¿Quieres que rote entre los 151 Pokémon de Gen 1 (uno
+      distinto cada minuto) o uno fijo siempre?"
+     Si dice "fijo": pregúntale qué Pokémon quiere. Acepta
+     nombre o ID (1-151). Si te da un nombre, conviértelo a ID:
+       1=bulbasaur  4=charmander  7=squirtle  25=pikachu
+       39=jigglypuff  133=eevee  150=mewtwo  151=mew
+       (lista completa: https://pokeapi.co/api/v2/pokemon?limit=151)
+     Default sugerido: rotate
+
+   Pregunta C — Tamaño:
+     "¿Qué ancho quieres para el sprite? (en columnas, 8-40,
+      por defecto 18)"
+     Default sugerido: 18
+
+Paso 4. Confirma el resumen
+   Antes de ejecutar nada que modifique el sistema, repítele al
+   usuario las 3 elecciones y pídele "ok" explícito.
+
+Paso 5. Ejecuta el instalador en modo no interactivo
+   bash /tmp/claude-pokemon-statusline/install.sh \
+     --position=<left|right|compact> \
+     --selection=<rotate|fixed> \
+     --pokemon=<id-si-fixed-o-vacío> \
+     --width=<n> \
+     --yes
+
+   El --yes salta la confirmación final del propio script (ya la
+   has hecho tú con el usuario).
+
+Paso 6. Reporta el resultado
+   Dile al usuario:
+     - Si todo fue bien: que abra una nueva sesión de Claude Code
+       (o reinicie la actual) para ver el sprite.
+     - Que el original de su statusline está preservado en
+       `.statusLine.command_wrapped` dentro de ~/.claude/settings.json
+       y que se hizo backup en `settings.json.pre-pokemon.<timestamp>.bak`.
+     - Cómo desinstalar: bash <repo>/uninstall.sh
+
+------------------------------------------------------------
+NOTAS PARA EL AGENTE
+------------------------------------------------------------
+
+- NO modifiques settings.json directamente. Usa siempre install.sh:
+  hace backup atómico, valida los flags y maneja el caso "ya estaba
+  wrapeado" correctamente.
+
+- Si la instalación falla a mitad (p.ej. la descarga del sprite
+  inicial), NO es problema: el wrapper se reintenta en runtime. Avísale
+  al usuario que verá el sprite en cuanto haya conectividad.
+
+- Si el usuario quiere cambiar opciones más tarde, NO reinstales:
+  basta con editar `pokemonStatusline.position` /`.selection`/
+  `.pokemon`/`.width` en `~/.claude/settings.json`. Los cambios
+  son inmediatos (el wrapper lee la config en cada repintado).
+
+- Si el usuario ya tenía esto instalado (jq detecta
+  `.statusLine.command_wrapped` apuntando a un .sh existente), el
+  install.sh detecta el caso y solo actualiza la config — no
+  re-wrapea. Es seguro re-ejecutar.
+
+- NO desinstales sin que te lo pida. Si te lo pide, ejecuta:
+    bash <repo>/uninstall.sh
+  El uninstall pregunta si borrar también la caché.
+
+------------------------------------------------------------
+COMPROBACIÓN POST-INSTALACIÓN
+------------------------------------------------------------
+
+Si el usuario quiere verificar que funciona sin reiniciar Claude
+Code, simula la entrada de un statusline:
+
+  echo '{"model":{"display_name":"Claude"},
+         "context_window":{"context_window_size":200000,
+           "current_usage":{"input_tokens":0,
+             "cache_creation_input_tokens":0,
+             "cache_read_input_tokens":0}}}' \
+    | bash ~/.claude/pokemon-statusline/statusline-wrap.sh
+
+Debería imprimir el statusline con el sprite ANSI pegado.
+Si solo imprime el statusline (sin sprite), revisa:
+  - ¿Existe ~/.claude/sprites-pokemon/current/frame-0.ansi?
+    Si no, ejecuta a mano: bash ~/.claude/pokemon-statusline/pokemon-rotate.sh 18
+  - ¿Tiene Pillow instalado python3?: python3 -c 'import PIL'
+
+============================================================
