@@ -26,13 +26,13 @@ bash install.sh
 El instalador es interactivo y pregunta:
 1. **Posición**: izquierda / derecha / compact
 2. **Selección**: rotar los 151 / fijo (eliges ID)
-3. **Ancho** del sprite (default 18)
+3. **Ancho** del sprite (default 22)
 
 ### Modo no interactivo
 
 ```bash
-bash install.sh --position=left --selection=rotate --width=18 --yes
-bash install.sh --position=right --selection=fixed --pokemon=25 --width=20 --yes
+bash install.sh --position=left --selection=rotate --width=22 --yes
+bash install.sh --position=right --selection=fixed --pokemon=25 --width=24 --yes
 ```
 
 ## Desinstalación
@@ -71,7 +71,7 @@ El instalador escribe esto en `~/.claude/settings.json`:
     "position": "left",       // "left" | "right" | "compact"
     "selection": "rotate",    // "rotate" | "fixed"
     "pokemon": "",            // ID 1-151 si selection=fixed
-    "width": 18
+    "width": 22
   }
 }
 ```

@@ -3,13 +3,13 @@
 #
 # Interactive by default (asks position/selection/width).
 # For non-interactive use (e.g., from a Claude Code agent):
-#   ./install.sh --position=left --selection=rotate --width=18
-#   ./install.sh --position=right --selection=fixed --pokemon=25 --width=20
+#   ./install.sh --position=left --selection=rotate --width=22
+#   ./install.sh --position=right --selection=fixed --pokemon=25 --width=24
 # Flags:
 #   --position=left|right|compact    sprite placement (default: left)
 #   --selection=rotate|fixed         rotate Gen 1 every minute, or pick one
 #   --pokemon=<id>                   1..151, only used with --selection=fixed
-#   --width=<n>                      sprite width in chars (default: 18)
+#   --width=<n>                      sprite width in chars (default: 22)
 #   --yes                            skip confirmation prompt
 set -euo pipefail
 
@@ -94,9 +94,9 @@ if $INTERACTIVE; then
   fi
 
   if [ -z "$WIDTH" ]; then
-    echo "${B}3. Tamaño del sprite${N} ${D}(en columnas; cada columna ≈ 1 carácter)${N}"
-    read -rp "Ancho [18]: " WIDTH
-    WIDTH="${WIDTH:-18}"
+    echo "${B}3. Tamaño del sprite${N} ${D}(en columnas; 18 = compacto, 22 = recomendado, 26 = grande)${N}"
+    read -rp "Ancho [22]: " WIDTH
+    WIDTH="${WIDTH:-22}"
     echo
   fi
 fi
@@ -104,7 +104,7 @@ fi
 # --- Validate / fill defaults ---
 POSITION="${POSITION:-left}"
 SELECTION="${SELECTION:-rotate}"
-WIDTH="${WIDTH:-18}"
+WIDTH="${WIDTH:-22}"
 case "$POSITION" in
   left|right|compact) ;;
   *) echo "${R}position inválida: $POSITION${N}"; exit 1 ;;

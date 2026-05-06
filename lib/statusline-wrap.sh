@@ -20,14 +20,14 @@ WRAPPED=""
 POSITION="left"
 SELECTION="rotate"
 FIXED_ID=""
-WIDTH=18
+WIDTH=22
 if [ -f "$SETTINGS" ] && command -v jq >/dev/null 2>&1; then
   WRAPPED=$(jq -r '.statusLine.command_wrapped // empty' "$SETTINGS" 2>/dev/null)
   POSITION=$(jq -r '.pokemonStatusline.position // "left"' "$SETTINGS" 2>/dev/null)
   SELECTION=$(jq -r '.pokemonStatusline.selection // "rotate"' "$SETTINGS" 2>/dev/null)
   FIXED_ID=$(jq -r '.pokemonStatusline.pokemon // empty' "$SETTINGS" 2>/dev/null)
-  W=$(jq -r '.pokemonStatusline.width // 18' "$SETTINGS" 2>/dev/null)
-  case "$W" in ''|*[!0-9]*) WIDTH=18 ;; *) WIDTH="$W" ;; esac
+  W=$(jq -r '.pokemonStatusline.width // 22' "$SETTINGS" 2>/dev/null)
+  case "$W" in ''|*[!0-9]*) WIDTH=22 ;; *) WIDTH="$W" ;; esac
 fi
 
 # --- Run the user's original statusline (if any) ---

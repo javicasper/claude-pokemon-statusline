@@ -68,8 +68,8 @@ Paso 3. Pregúntale al usuario las 3 opciones — UNA POR UNA, NO TODAS A LA VEZ
 
    Pregunta C — Tamaño:
      "¿Qué ancho quieres para el sprite? (en columnas, 8-40,
-      por defecto 18)"
-     Default sugerido: 18
+      por defecto 22)"
+     Default sugerido: 22 (compacto=18, grande=26)
 
 Paso 4. Confirma el resumen
    Antes de ejecutar nada que modifique el sistema, repítele al
@@ -138,7 +138,7 @@ Code, simula la entrada de un statusline:
 Debería imprimir el statusline con el sprite ANSI pegado.
 Si solo imprime el statusline (sin sprite), revisa:
   - ¿Existe ~/.claude/sprites-pokemon/current/frame-0.ansi?
-    Si no, ejecuta a mano: bash ~/.claude/pokemon-statusline/pokemon-rotate.sh 18
+    Si no, ejecuta a mano: bash ~/.claude/pokemon-statusline/pokemon-rotate.sh 22
   - ¿Tiene Pillow instalado python3?: python3 -c 'import PIL'
 
 ============================================================

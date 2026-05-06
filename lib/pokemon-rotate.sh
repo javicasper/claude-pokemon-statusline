@@ -4,7 +4,7 @@
 # Usage: pokemon-rotate.sh [width] [fixed_id]
 set -euo pipefail
 
-WIDTH="${1:-18}"
+WIDTH="${1:-22}"
 FIXED_ID="${2:-}"
 TOTAL=151
 SPRITES_DIR="$HOME/.claude/sprites-pokemon"
