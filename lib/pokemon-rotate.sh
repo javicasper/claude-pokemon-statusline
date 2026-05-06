@@ -6,7 +6,7 @@ set -euo pipefail
 
 WIDTH="${1:-0}"
 FIXED_ID="${2:-}"
-MODE="${3:-halfblock}"  # halfblock=1×2, quadrant=2×2, sextant=2×3 px per cell
+MODE="${3:-sextant}"  # halfblock=1×2, quadrant=2×2, sextant=2×3 px per cell
 TOTAL=649  # PokeAPI BW animated covers Gen 1-5 (IDs 1..649)
 SPRITES_DIR="$HOME/.claude/sprites-pokemon"
 CACHE="$SPRITES_DIR/cache"

@@ -119,7 +119,9 @@ def _frame_to_sextant(img, width, bbox=None):
     if bbox:
         img = img.crop(bbox)
     # Each cell = 2 px wide × 3 px tall.
-    img.thumbnail((width * 2, width * 12), Image.LANCZOS)
+    if width > 0:
+        img.thumbnail((width * 2, width * 12), Image.LANCZOS)
+    # width <= 0: render at native sprite resolution.
     w, h = img.size
     nw = w + (w % 2)
     nh = h + ((3 - h % 3) % 3)
@@ -148,7 +150,8 @@ def _frame_to_quadrant(img, width, bbox=None):
     if bbox:
         img = img.crop(bbox)
     # Each cell = 2×2 pixels, so target image width = width * 2.
-    img.thumbnail((width * 2, width * 8), Image.LANCZOS)
+    if width > 0:
+        img.thumbnail((width * 2, width * 8), Image.LANCZOS)
     w, h = img.size
     nw, nh = w + (w % 2), h + (h % 2)
     if (nw, nh) != (w, h):
