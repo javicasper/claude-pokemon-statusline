@@ -90,9 +90,10 @@ case "$COLS" in
   *) [ "$COLS" -lt 40 ] && COLS=100 ;;
 esac
 
-# --- Build "#025 Pikachu" label below the sprite ---
+# --- Build "#025 Pikachu" label below the sprite, colored by primary type ---
 POKEMON_LABEL=""
 NAMES_FILE="$INSTALL_DIR/pokemon-names.txt"
+TYPES_FILE="$INSTALL_DIR/pokemon-types.txt"
 if [ -n "$SPRITE" ] && [ -f "$NAMES_FILE" ]; then
   REAL_SPRITE=$(readlink -f "$SPRITE" 2>/dev/null || echo "$SPRITE")
   PKMN_ID=$(basename "$(dirname "$REAL_SPRITE")")
@@ -100,10 +101,33 @@ if [ -n "$SPRITE" ] && [ -f "$NAMES_FILE" ]; then
     ''|*[!0-9]*) ;;
     *)
       PKMN_NAME=$(sed -n "${PKMN_ID}p" "$NAMES_FILE" 2>/dev/null)
+      PKMN_TYPE=""
+      [ -f "$TYPES_FILE" ] && PKMN_TYPE=$(sed -n "${PKMN_ID}p" "$TYPES_FILE" 2>/dev/null)
+      case "$PKMN_TYPE" in
+        normal)   TC="168;168;120" ;;
+        fire)     TC="240;128;48"  ;;
+        water)    TC="104;144;240" ;;
+        electric) TC="248;208;48"  ;;
+        grass)    TC="120;200;80"  ;;
+        ice)      TC="152;216;216" ;;
+        fighting) TC="192;48;40"   ;;
+        poison)   TC="160;64;160"  ;;
+        ground)   TC="224;192;104" ;;
+        flying)   TC="168;144;240" ;;
+        psychic)  TC="248;88;136"  ;;
+        bug)      TC="168;184;32"  ;;
+        rock)     TC="184;160;56"  ;;
+        ghost)    TC="112;88;152"  ;;
+        dragon)   TC="112;56;248"  ;;
+        dark)     TC="112;88;72"   ;;
+        steel)    TC="184;184;208" ;;
+        fairy)    TC="238;153;172" ;;
+        *)        TC="220;220;220" ;;
+      esac
       if [ -n "$PKMN_NAME" ]; then
         PKMN_CAP="$(printf '%s' "${PKMN_NAME:0:1}" | tr '[:lower:]' '[:upper:]')${PKMN_NAME:1}"
-        POKEMON_LABEL=$(printf '\033[2m#%03d \033[0m\033[38;2;220;220;220m%s\033[0m' \
-          "$PKMN_ID" "$PKMN_CAP")
+        POKEMON_LABEL=$(printf '\033[2m#%03d \033[0m\033[38;2;%sm%s\033[0m' \
+          "$PKMN_ID" "$TC" "$PKMN_CAP")
         export POKEMON_LABEL
       fi
       ;;
