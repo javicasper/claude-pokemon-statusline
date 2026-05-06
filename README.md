@@ -26,7 +26,7 @@ bash install.sh
 El instalador es interactivo y pregunta:
 1. **Posición**: izquierda / derecha / compact
 2. **Selección**: rotar los 649 (Gen 1-5) / fijo (eliges ID)
-3. **Ancho** del sprite (default 30)
+3. **Ancho** del sprite (default 20)
 
 ### Modo no interactivo
 

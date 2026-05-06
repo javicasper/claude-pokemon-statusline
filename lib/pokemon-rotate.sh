@@ -4,8 +4,9 @@
 # Usage: pokemon-rotate.sh [width] [fixed_id]
 set -euo pipefail
 
-WIDTH="${1:-30}"
+WIDTH="${1:-0}"
 FIXED_ID="${2:-}"
+MODE="${3:-halfblock}"  # halfblock=1×2, quadrant=2×2, sextant=2×3 px per cell
 TOTAL=649  # PokeAPI BW animated covers Gen 1-5 (IDs 1..649)
 SPRITES_DIR="$HOME/.claude/sprites-pokemon"
 CACHE="$SPRITES_DIR/cache"
@@ -29,7 +30,7 @@ if [ ! -f "$DIR/frame-0.ansi" ]; then
   if [ ! -f "$GIF" ]; then
     curl -fsSL --max-time 10 -o "$GIF" "$URL_BASE/$ID.gif" || exit 1
   fi
-  python3 "$INSTALL_DIR/sprite-render.py" "$GIF" "$WIDTH" "$DIR/frame" >/dev/null || exit 1
+  python3 "$INSTALL_DIR/sprite-render.py" "$GIF" "$WIDTH" "$DIR/frame" "$MODE" >/dev/null || exit 1
 fi
 
 if [ -z "$FIXED_ID" ]; then
