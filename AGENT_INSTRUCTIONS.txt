@@ -13,7 +13,7 @@ QUÉ ES ESTO
 ------------------------------------------------------------
 
 Un wrapper para el statusline de Claude Code que mete un sprite
-animado de Pokémon (de PokeAPI, Gen 1 black-white) al lado del
+animado de Pokémon (de PokeAPI, Gen 1-5 black-white) al lado del
 statusline actual del usuario, SIN reemplazarlo.
 
 Mecanismo: en `~/.claude/settings.json`, el instalador renombra
@@ -57,13 +57,14 @@ Paso 3. Pregúntale al usuario las 3 opciones — UNA POR UNA, NO TODAS A LA VEZ
      Default sugerido: left
 
    Pregunta B — Selección:
-     "¿Quieres que rote entre los 151 Pokémon de Gen 1 (uno
-      distinto cada minuto) o uno fijo siempre?"
+     "¿Quieres que rote entre los 649 Pokémon de Gen 1-5 (uno
+      distinto cada minuto, ciclo completo ~11 horas) o uno fijo
+      siempre?"
      Si dice "fijo": pregúntale qué Pokémon quiere. Acepta
-     nombre o ID (1-151). Si te da un nombre, conviértelo a ID:
-       1=bulbasaur  4=charmander  7=squirtle  25=pikachu
-       39=jigglypuff  133=eevee  150=mewtwo  151=mew
-       (lista completa: https://pokeapi.co/api/v2/pokemon?limit=151)
+     nombre o ID (1-649). Si te da un nombre, conviértelo a ID
+     consultando: https://pokeapi.co/api/v2/pokemon-species?limit=649
+     (atajos: 4=charmander 25=pikachu 133=eevee 150=mewtwo
+      252=treecko 387=turtwig 445=garchomp 643=reshiram).
      Default sugerido: rotate
 
    Pregunta C — Tamaño:

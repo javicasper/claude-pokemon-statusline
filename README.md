@@ -8,10 +8,10 @@ Si no tenías statusline configurado, el wrapper imprime el nombre del modelo (e
 
 ## Cómo funciona
 
-- **Sprites**: GIFs de Gen 1 black-white animated de [PokeAPI/sprites](https://github.com/PokeAPI/sprites). Se descargan bajo demanda a `~/.claude/sprites-pokemon/cache/<id>/`.
+- **Sprites**: GIFs animados black-white de [PokeAPI/sprites](https://github.com/PokeAPI/sprites), generaciones 1-5 (649 Pokémon). Se descargan bajo demanda a `~/.claude/sprites-pokemon/cache/<id>/`.
 - **Render**: cada frame del GIF → arte ANSI con caracteres `▀` (half-block, foreground = pixel superior, background = pixel inferior, truecolor RGB).
 - **Animación**: el wrapper elige el frame actual con `now_ms / 250` (4 fps). Como Claude Code repinta el statusline en cada keystroke, la animación avanza sola sin proceso de fondo.
-- **Rotación**: en modo `rotate`, el Pokémon cambia cada minuto (`epoch_min % 151 + 1`). En modo `fixed`, siempre el mismo.
+- **Rotación**: en modo `rotate`, el Pokémon cambia cada minuto (`epoch_min % 649 + 1`, ciclo completo en ~11 horas). En modo `fixed`, siempre el mismo.
 
 ## Instalación
 
@@ -25,7 +25,7 @@ bash install.sh
 
 El instalador es interactivo y pregunta:
 1. **Posición**: izquierda / derecha / compact
-2. **Selección**: rotar los 151 / fijo (eliges ID)
+2. **Selección**: rotar los 649 (Gen 1-5) / fijo (eliges ID)
 3. **Ancho** del sprite (default 22)
 
 ### Modo no interactivo
@@ -70,7 +70,7 @@ El instalador escribe esto en `~/.claude/settings.json`:
   "pokemonStatusline": {
     "position": "left",       // "left" | "right" | "compact"
     "selection": "rotate",    // "rotate" | "fixed"
-    "pokemon": "",            // ID 1-151 si selection=fixed
+    "pokemon": "",            // ID 1-649 si selection=fixed
     "width": 22
   }
 }

@@ -60,11 +60,22 @@ def render_gif(path, width, frame_count=DEFAULT_GIF_FRAMES):
     img = Image.open(path)
     n = getattr(img, "n_frames", 1)
     limit = n if frame_count <= 0 else min(frame_count, n)
-    indices = list(range(limit))
+
+    # Some GIFs report more frames than they can actually seek to.
+    real_indices = []
+    for i in range(limit):
+        try:
+            img.seek(i)
+        except EOFError:
+            break
+        real_indices.append(i)
 
     union = None
-    for i in indices:
-        img.seek(i)
+    for i in real_indices:
+        try:
+            img.seek(i)
+        except EOFError:
+            continue
         bb = img.convert("RGBA").getbbox()
         if bb:
             if union is None:
@@ -77,8 +88,11 @@ def render_gif(path, width, frame_count=DEFAULT_GIF_FRAMES):
 
     bbox = tuple(union) if union else None
     frames = []
-    for i in indices:
-        img.seek(i)
+    for i in real_indices:
+        try:
+            img.seek(i)
+        except EOFError:
+            continue
         frames.append(_frame_to_ansi(img, width, bbox=bbox))
     return frames
 

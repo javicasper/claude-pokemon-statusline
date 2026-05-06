@@ -6,7 +6,7 @@ set -euo pipefail
 
 WIDTH="${1:-22}"
 FIXED_ID="${2:-}"
-TOTAL=151
+TOTAL=649  # PokeAPI BW animated covers Gen 1-5 (IDs 1..649)
 SPRITES_DIR="$HOME/.claude/sprites-pokemon"
 CACHE="$SPRITES_DIR/cache"
 CURRENT="$SPRITES_DIR/current"

@@ -7,8 +7,8 @@
 #   ./install.sh --position=right --selection=fixed --pokemon=25 --width=24
 # Flags:
 #   --position=left|right|compact    sprite placement (default: left)
-#   --selection=rotate|fixed         rotate Gen 1 every minute, or pick one
-#   --pokemon=<id>                   1..151, only used with --selection=fixed
+#   --selection=rotate|fixed         rotate Gen 1-5 every minute, or pick one
+#   --pokemon=<id>                   1..649, only used with --selection=fixed
 #   --width=<n>                      sprite width in chars (default: 22)
 #   --yes                            skip confirmation prompt
 set -euo pipefail
@@ -78,14 +78,14 @@ if $INTERACTIVE; then
 
   if [ -z "$SELECTION" ]; then
     echo "${B}2. Qué Pokémon mostrar${N}"
-    echo "  ${C}1${N}) rotar — un Pokémon de Gen 1 distinto cada minuto (151 en total)"
+    echo "  ${C}1${N}) rotar — un Pokémon distinto cada minuto (Gen 1-5, 649 en total)"
     echo "  ${C}2${N}) fijo  — uno concreto (eliges el ID)"
     read -rp "Elige [1]: " s
     case "${s:-1}" in
       2)
         SELECTION="fixed"
         echo "  ${D}Algunos IDs:  1=Bulbasaur  4=Charmander  7=Squirtle  25=Pikachu  39=Jigglypuff  133=Eevee  150=Mewtwo${N}"
-        read -rp "ID del Pokémon (1-151) [25]: " FIXED_ID
+        read -rp "ID del Pokémon (1-649) [25]: " FIXED_ID
         FIXED_ID="${FIXED_ID:-25}"
         ;;
       *) SELECTION="rotate" ;;
@@ -116,8 +116,8 @@ case "$SELECTION" in
     case "$FIXED_ID" in
       ''|*[!0-9]*) echo "${R}pokemon ID inválido: $FIXED_ID${N}"; exit 1 ;;
     esac
-    if [ "$FIXED_ID" -lt 1 ] || [ "$FIXED_ID" -gt 151 ]; then
-      echo "${R}pokemon ID fuera de rango (1-151): $FIXED_ID${N}"; exit 1
+    if [ "$FIXED_ID" -lt 1 ] || [ "$FIXED_ID" -gt 649 ]; then
+      echo "${R}pokemon ID fuera de rango (1-649): $FIXED_ID${N}"; exit 1
     fi
     ;;
   *) echo "${R}selection inválida: $SELECTION${N}"; exit 1 ;;
