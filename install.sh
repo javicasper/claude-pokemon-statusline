@@ -151,6 +151,7 @@ cp "$SCRIPT_DIR/lib/sprite-render.py" "$INSTALL_DIR/"
 cp "$SCRIPT_DIR/lib/sprite-paste.py" "$INSTALL_DIR/"
 cp "$SCRIPT_DIR/lib/pokemon-rotate.sh" "$INSTALL_DIR/"
 cp "$SCRIPT_DIR/lib/statusline-wrap.sh" "$INSTALL_DIR/"
+cp "$SCRIPT_DIR/lib/pokemon-names.txt" "$INSTALL_DIR/"
 chmod +x "$INSTALL_DIR/"*.sh "$INSTALL_DIR/"*.py
 echo "${G}✓${N} Archivos copiados a $INSTALL_DIR"
 

@@ -90,6 +90,26 @@ case "$COLS" in
   *) [ "$COLS" -lt 40 ] && COLS=100 ;;
 esac
 
+# --- Build "#025 Pikachu" label below the sprite ---
+POKEMON_LABEL=""
+NAMES_FILE="$INSTALL_DIR/pokemon-names.txt"
+if [ -n "$SPRITE" ] && [ -f "$NAMES_FILE" ]; then
+  REAL_SPRITE=$(readlink -f "$SPRITE" 2>/dev/null || echo "$SPRITE")
+  PKMN_ID=$(basename "$(dirname "$REAL_SPRITE")")
+  case "$PKMN_ID" in
+    ''|*[!0-9]*) ;;
+    *)
+      PKMN_NAME=$(sed -n "${PKMN_ID}p" "$NAMES_FILE" 2>/dev/null)
+      if [ -n "$PKMN_NAME" ]; then
+        PKMN_CAP="$(printf '%s' "${PKMN_NAME:0:1}" | tr '[:lower:]' '[:upper:]')${PKMN_NAME:1}"
+        POKEMON_LABEL=$(printf '\033[2m#%03d \033[0m\033[38;2;220;220;220m%s\033[0m' \
+          "$PKMN_ID" "$PKMN_CAP")
+        export POKEMON_LABEL
+      fi
+      ;;
+  esac
+fi
+
 # --- Glue it together ---
 PASTER="$INSTALL_DIR/sprite-paste.py"
 if [ -n "$SPRITE" ] && [ -f "$SPRITE" ] && [ -f "$PASTER" ] && command -v python3 >/dev/null 2>&1; then

@@ -22,6 +22,7 @@ def vlen(s: str) -> int:
 
 
 def main() -> None:
+    import os
     sprite_path = sys.argv[1]
     cols = int(sys.argv[2]) if len(sys.argv) > 2 else 120
     mode = sys.argv[3] if len(sys.argv) > 3 else "left"
@@ -30,6 +31,11 @@ def main() -> None:
     status = raw.rstrip("\n").split("\n") if raw else []
     with open(sprite_path) as f:
         sprite = f.read().rstrip("\n").split("\n")
+
+    # Optional label (e.g. "#025 Pikachu") rendered below the sprite.
+    label = os.environ.get("POKEMON_LABEL", "")
+    if label:
+        sprite.append(label)
 
     sprite_w = max((vlen(line) for line in sprite), default=0)
     edge_max = max(0, cols - sprite_w - GAP - SAFETY)
