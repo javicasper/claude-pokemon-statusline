@@ -13,7 +13,7 @@ from PIL import Image
 ESC = "\033["
 RESET = ESC + "0m"
 TRANSPARENT = "⠀"  # Braille Blank: visible-width but survives terminal trim
-DEFAULT_GIF_FRAMES = 9
+DEFAULT_GIF_FRAMES = 0  # 0 = use all frames; BW GIFs typically have ~50-85
 
 
 def _frame_to_ansi(img, width, bbox=None):
@@ -59,7 +59,8 @@ def render_static(path, width):
 def render_gif(path, width, frame_count=DEFAULT_GIF_FRAMES):
     img = Image.open(path)
     n = getattr(img, "n_frames", 1)
-    indices = list(range(min(frame_count, n)))
+    limit = n if frame_count <= 0 else min(frame_count, n)
+    indices = list(range(limit))
 
     union = None
     for i in indices:

@@ -67,9 +67,9 @@ else
   SPRITE_DIR="$HOME/.claude/sprites-pokemon/current"
 fi
 
-# --- Pick frame (4 fps from wall clock) ---
+# --- Pick frame (10 fps from wall clock; matches BW GIFs' native cadence) ---
 NOW_MS=$(date +%s%3N)
-TICK=$(( NOW_MS / 250 ))
+TICK=$(( NOW_MS / 100 ))
 SPRITE=""
 if [ -d "$SPRITE_DIR" ]; then
   NFRAMES=$(ls "$SPRITE_DIR"/frame-*.ansi 2>/dev/null | wc -l)
