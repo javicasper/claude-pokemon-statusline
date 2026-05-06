@@ -42,7 +42,7 @@ Paso 1. Comprueba dependencias
 
 Paso 2. Clona el repo (o copia los archivos)
    Si tienes acceso a internet:
-     git clone https://github.com/<owner>/claude-pokemon-statusline /tmp/claude-pokemon-statusline
+     git clone https://github.com/javicasper/claude-pokemon-statusline /tmp/claude-pokemon-statusline
    Si no, asume que el usuario ya lo tiene clonado y pregúntale dónde.
 
 Paso 3. Pregúntale al usuario las 3 opciones — UNA POR UNA, NO TODAS A LA VEZ

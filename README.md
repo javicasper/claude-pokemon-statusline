@@ -18,7 +18,7 @@ Si no tenías statusline configurado, el wrapper imprime el nombre del modelo (e
 Requisitos: `python3` con [Pillow](https://pillow.readthedocs.io/), `jq`, `curl`.
 
 ```bash
-git clone https://github.com/<usuario>/claude-pokemon-statusline.git
+git clone https://github.com/javicasper/claude-pokemon-statusline.git
 cd claude-pokemon-statusline
 bash install.sh
 ```
