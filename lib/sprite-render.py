@@ -4,6 +4,10 @@
 Static:   sprite-render.py <input.png> [width=16]              → stdout
           sprite-render.py <input.png> <width> <out_prefix>    → out_prefix.ansi
 Animated: sprite-render.py <input.gif> <width> <out_prefix>    → out_prefix-N.ansi
+
+Optional args (positional): <mode> <max_height_cells>
+  mode = halfblock | quadrant | sextant   (default: halfblock)
+  max_height_cells = cap output rows (0 = no cap, default: 0)
 """
 import glob
 import os
@@ -112,7 +116,7 @@ def _sextant_cell(pixels):
     return f"{ESC}38;2;{fr};{fg};{fb}m{sextant_char(bits)}{RESET}"
 
 
-def _frame_to_sextant(img, width, bbox=None):
+def _frame_to_sextant(img, width, bbox=None, max_h=0):
     img = img.convert("RGBA")
     if bbox is None:
         bbox = img.getbbox()
@@ -120,7 +124,8 @@ def _frame_to_sextant(img, width, bbox=None):
         img = img.crop(bbox)
     # Each cell = 2 px wide × 3 px tall.
     if width > 0:
-        img.thumbnail((width * 2, width * 12), Image.LANCZOS)
+        h_px = max_h * 3 if max_h > 0 else width * 12
+        img.thumbnail((width * 2, h_px), Image.LANCZOS)
     # width <= 0: render at native sprite resolution.
     w, h = img.size
     nw = w + (w % 2)
@@ -143,7 +148,7 @@ def _frame_to_sextant(img, width, bbox=None):
     return lines
 
 
-def _frame_to_quadrant(img, width, bbox=None):
+def _frame_to_quadrant(img, width, bbox=None, max_h=0):
     img = img.convert("RGBA")
     if bbox is None:
         bbox = img.getbbox()
@@ -151,7 +156,8 @@ def _frame_to_quadrant(img, width, bbox=None):
         img = img.crop(bbox)
     # Each cell = 2×2 pixels, so target image width = width * 2.
     if width > 0:
-        img.thumbnail((width * 2, width * 8), Image.LANCZOS)
+        h_px = max_h * 2 if max_h > 0 else width * 8
+        img.thumbnail((width * 2, h_px), Image.LANCZOS)
     w, h = img.size
     nw, nh = w + (w % 2), h + (h % 2)
     if (nw, nh) != (w, h):
@@ -170,14 +176,15 @@ def _frame_to_quadrant(img, width, bbox=None):
     return lines
 
 
-def _frame_to_ansi(img, width, bbox=None):
+def _frame_to_ansi(img, width, bbox=None, max_h=0):
     img = img.convert("RGBA")
     if bbox is None:
         bbox = img.getbbox()
     if bbox:
         img = img.crop(bbox)
     if width > 0:
-        img.thumbnail((width, width * 4), Image.LANCZOS)
+        h_px = max_h * 2 if max_h > 0 else width * 4
+        img.thumbnail((width, h_px), Image.LANCZOS)
     # width <= 0: render at native sprite resolution (zero pixel loss).
     w, h = img.size
     if h % 2:
@@ -205,14 +212,14 @@ def _frame_to_ansi(img, width, bbox=None):
     return lines
 
 
-def render_static(path, width):
+def render_static(path, width, max_h=0):
     img = Image.open(path)
     if getattr(img, "n_frames", 1) > 1:
         img.seek(0)
-    return _frame_to_ansi(img, width)
+    return _frame_to_ansi(img, width, max_h=max_h)
 
 
-def render_gif(path, width, frame_count=DEFAULT_GIF_FRAMES, mode="halfblock"):
+def render_gif(path, width, frame_count=DEFAULT_GIF_FRAMES, mode="halfblock", max_h=0):
     img = Image.open(path)
     n = getattr(img, "n_frames", 1)
     limit = n if frame_count <= 0 else min(frame_count, n)
@@ -255,7 +262,7 @@ def render_gif(path, width, frame_count=DEFAULT_GIF_FRAMES, mode="halfblock"):
             img.seek(i)
         except EOFError:
             continue
-        frames.append(render_one(img, width, bbox=bbox))
+        frames.append(render_one(img, width, bbox=bbox, max_h=max_h))
     return frames
 
 
@@ -264,13 +271,14 @@ def main():
     width = int(sys.argv[2]) if len(sys.argv) > 2 else 16
     out_prefix = sys.argv[3] if len(sys.argv) > 3 else None
     mode = sys.argv[4] if len(sys.argv) > 4 else "halfblock"
+    max_h = int(sys.argv[5]) if len(sys.argv) > 5 else 0
 
     is_gif = src.lower().endswith(".gif")
 
     if is_gif:
         if not out_prefix:
             sys.exit("GIF mode requires <out_prefix> as 3rd arg")
-        frames = render_gif(src, width, mode=mode)
+        frames = render_gif(src, width, mode=mode, max_h=max_h)
         # Wipe stale frame files from a prior render at this prefix
         for old in glob.glob(f"{out_prefix}-*.ansi"):
             os.remove(old)
@@ -279,7 +287,7 @@ def main():
                 f.write("\n".join(lines))
         print(f"Wrote {len(frames)} frames to {out_prefix}-N.ansi")
     else:
-        lines = render_static(src, width)
+        lines = render_static(src, width, max_h=max_h)
         if out_prefix:
             with open(f"{out_prefix}.ansi", "w") as f:
                 f.write("\n".join(lines))
